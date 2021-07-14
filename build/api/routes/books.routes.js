@@ -1,0 +1,21 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var express_1 = require("express");
+var joi_validation_middleware_1 = require("../middlewares/joi-validation.middleware");
+var controllers_1 = require("../controllers");
+var validation_schema_1 = require("../../helpers/validation_schema");
+var express_2 = require("../../loaders/express");
+var router = express_1.Router();
+exports.default = (function (app) {
+    app.use("/books", express_2.keycloak.protect(), router);
+    router.get("/", controllers_1.booksController.getBooks.bind(controllers_1.booksController));
+    router.get("/:book_id", controllers_1.booksController.getBookDetails.bind(controllers_1.booksController));
+    router.get("/:book_id/reviews", controllers_1.booksController.getBookReviews.bind(controllers_1.booksController));
+    router.get("/:book_id/reviews/:review_id", controllers_1.booksController.getBookReview.bind(controllers_1.booksController));
+    router.post("/", joi_validation_middleware_1.joiValidation(validation_schema_1.bookSchema), controllers_1.booksController.createBook.bind(controllers_1.booksController));
+    router.post("/:book_id/reviews", joi_validation_middleware_1.joiValidation(validation_schema_1.reviewSchema), controllers_1.booksController.createBookReview.bind(controllers_1.booksController));
+    router.put("/:book_id", joi_validation_middleware_1.joiValidation(validation_schema_1.bookSchema), controllers_1.booksController.updateBook.bind(controllers_1.booksController));
+    router.put("/:book_id/reviews/:review_id", joi_validation_middleware_1.joiValidation(validation_schema_1.reviewSchema), controllers_1.booksController.updateBookReview.bind(controllers_1.booksController));
+    router.delete("/:book_id", controllers_1.booksController.deleteBook);
+    router.delete("/:book_id/reviews/:review_id", controllers_1.booksController.deleteBookReview.bind(controllers_1.booksController));
+});
